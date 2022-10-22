@@ -35,7 +35,6 @@ func main() {
 	opts := &plugin.ServeOpts{
 		Debug: debugMode,
 
-		// TODO: update this string with the full name of your provider as used in your configs
 		ProviderAddr: "registry.terraform.io/nwheeler-splunk/mailform",
 
 		ProviderFunc: provider.New(version),

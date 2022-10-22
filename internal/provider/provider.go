@@ -27,7 +27,7 @@ func New(version string) func() *schema.Provider {
 	return func() *schema.Provider {
 		p := &schema.Provider{
 			DataSourcesMap: map[string]*schema.Resource{
-				"mailform_data_source": dataSourceMailform(),
+				"mailform_data_source": dataSourceOrder(),
 			},
 			ResourcesMap: map[string]*schema.Resource{
 				"mailform_resource": resourceMailform(),

@@ -7,7 +7,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccDataSourceMailform(t *testing.T) {
+func TestAccDataSourceOrder(t *testing.T) {
 	t.Skip("data source not yet implemented, remove this once you add your own code")
 
 	resource.UnitTest(t, resource.TestCase{
@@ -15,7 +15,7 @@ func TestAccDataSourceMailform(t *testing.T) {
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDataSourceMailform,
+				Config: testAccDataSourceOrder,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestMatchResourceAttr(
 						"data.mailform_data_source.foo", "sample_attribute", regexp.MustCompile("^ba")),
@@ -25,7 +25,7 @@ func TestAccDataSourceMailform(t *testing.T) {
 	})
 }
 
-const testAccDataSourceMailform = `
+const testAccDataSourceOrder = `
 data "mailform_data_source" "foo" {
   sample_attribute = "bar"
 }
