@@ -18,7 +18,7 @@ func TestAccDataSourceOrder(t *testing.T) {
 				Config: testAccDataSourceOrder,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestMatchResourceAttr(
-						"data.mailform_data_source.foo", "sample_attribute", regexp.MustCompile("^ba")),
+						"data.mailform_order.foo", "sample_attribute", regexp.MustCompile("^ba")),
 				),
 			},
 		},
@@ -26,7 +26,7 @@ func TestAccDataSourceOrder(t *testing.T) {
 }
 
 const testAccDataSourceOrder = `
-data "mailform_data_source" "foo" {
+data "mailform_order" "foo" {
   sample_attribute = "bar"
 }
 `

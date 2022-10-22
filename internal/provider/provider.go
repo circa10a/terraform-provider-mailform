@@ -3,6 +3,7 @@ package provider
 import (
 	"context"
 
+	"github.com/circa10a/go-mailform"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -26,32 +27,37 @@ func init() {
 func New(version string) func() *schema.Provider {
 	return func() *schema.Provider {
 		p := &schema.Provider{
+			Schema: map[string]*schema.Schema{
+				"api_token": &schema.Schema{
+					Type:        schema.TypeString,
+					Optional:    true,
+					DefaultFunc: schema.EnvDefaultFunc("MAILFORM_API_TOKEN", nil),
+				},
+			},
 			DataSourcesMap: map[string]*schema.Resource{
-				"mailform_data_source": dataSourceOrder(),
+				"mailform_order": dataSourceOrder(),
 			},
 			ResourcesMap: map[string]*schema.Resource{
 				"mailform_resource": resourceMailform(),
 			},
+			ConfigureContextFunc: providerConfigure,
 		}
-
-		p.ConfigureContextFunc = configure(version, p)
 
 		return p
 	}
 }
 
-type apiClient struct {
-	// Add whatever fields, client or connection info, etc. here
-	// you would need to setup to communicate with the upstream
-	// API.
-}
+func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
+	var diags diag.Diagnostics
 
-func configure(version string, p *schema.Provider) func(context.Context, *schema.ResourceData) (any, diag.Diagnostics) {
-	return func(context.Context, *schema.ResourceData) (any, diag.Diagnostics) {
-		// Setup a User-Agent for your API client (replace the provider name for yours):
-		// userAgent := p.UserAgent("terraform-provider-mailform", version)
-		// TODO: myClient.UserAgent = userAgent
-
-		return &apiClient{}, nil
+	api_token := d.Get("api_token").(string)
+	client, err := mailform.New(&mailform.Config{
+		Token: api_token,
+	})
+	if err != nil {
+		return nil, diag.FromErr(err)
 	}
+	providerConfig := make(map[string]interface{})
+	providerConfig["client"] = client
+	return providerConfig, diags
 }
