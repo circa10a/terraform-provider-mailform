@@ -1,3 +1,3 @@
-provider "scaffolding" {
+provider "mailform" {
   # example configuration here
 }
