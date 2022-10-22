@@ -23,7 +23,7 @@ Order data source in the Terraform provider mailform.
 - `channel` (String)
 - `created` (String)
 - `customer_reference` (String)
-- `id` (Number) The ID of this resource.
+- `id` (String) The ID of this resource.
 - `lineitems` (List of Object) (see [below for nested schema](#nestedatt--lineitems))
 - `modified` (String)
 - `object` (String)

@@ -2,7 +2,9 @@ package provider
 
 import (
 	"context"
+	"time"
 
+	"github.com/circa10a/go-mailform"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -16,7 +18,7 @@ func dataSourceOrder() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"id": &schema.Schema{
-				Type:     schema.TypeInt,
+				Type:     schema.TypeString,
 				Required: true,
 			},
 			"object": &schema.Schema{
@@ -203,12 +205,74 @@ func dataSourceOrder() *schema.Resource {
 	}
 }
 
-func dataSourceOrderRead(ctx context.Context, d *schema.ResourceData, meta any) diag.Diagnostics {
-	// use the meta value to retrieve your client from the provider configure method
-	// client := meta.(*apiClient)
+func dataSourceOrderRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	providerConfig := m.(map[string]interface{})
+	client := providerConfig["client"].(*mailform.Client)
 
-	idFromAPI := "my-id"
-	d.SetId(idFromAPI)
+	var diags diag.Diagnostics
 
-	return diag.Errorf("not implemented")
+	id := d.Get("id").(string)
+	order, err := client.GetOrder(id)
+	// todo: handle the case where the order does not exist and we gracefully SetID("") i guess.
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
+	// maybe we want to d.SetId(strconv.FormatInt(time.Now().Unix(), 10))
+	// so we always run and refresh the sweet, sweet datas
+	d.SetId(order.Data.ID)
+
+	if err := d.Set("object", order.Data.Object); err != nil {
+		return diag.FromErr(err)
+	}
+
+	if err := d.Set("created", order.Data.Created.Format(time.RFC3339)); err != nil {
+		return diag.FromErr(err)
+	}
+
+	if err := d.Set("total", order.Data.Total); err != nil {
+		return diag.FromErr(err)
+	}
+
+	if err := d.Set("modified", order.Data.Modified.Format(time.RFC3339)); err != nil {
+		return diag.FromErr(err)
+	}
+
+	if err := d.Set("webhook", order.Data.Webhook); err != nil {
+		return diag.FromErr(err)
+	}
+
+	if err := d.Set("lineitems", order.Data.Lineitems); err != nil {
+		return diag.FromErr(err)
+	}
+
+	if err := d.Set("account", order.Data.Account); err != nil {
+		return diag.FromErr(err)
+	}
+
+	if err := d.Set("customer_reference", order.Data.CustomerReference); err != nil {
+		return diag.FromErr(err)
+	}
+
+	if err := d.Set("channel", order.Data.Channel); err != nil {
+		return diag.FromErr(err)
+	}
+
+	if err := d.Set("test_mode", order.Data.TestMode); err != nil {
+		return diag.FromErr(err)
+	}
+
+	if err := d.Set("state", order.Data.State); err != nil {
+		return diag.FromErr(err)
+	}
+
+	if err := d.Set("cancelled", order.Data.Cancelled.Format(time.RFC3339)); err != nil {
+		return diag.FromErr(err)
+	}
+
+	if err := d.Set("cancellation_reason", order.Data.CancellationReason); err != nil {
+		return diag.FromErr(err)
+	}
+
+	return diags
 }
