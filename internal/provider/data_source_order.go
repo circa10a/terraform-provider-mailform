@@ -2,6 +2,7 @@ package provider
 
 import (
 	"context"
+	"strings"
 	"time"
 
 	"github.com/circa10a/go-mailform"
@@ -17,153 +18,153 @@ func dataSourceOrder() *schema.Resource {
 		ReadContext: dataSourceOrderRead,
 
 		Schema: map[string]*schema.Schema{
-			"id": &schema.Schema{
+			"id": {
 				Type:     schema.TypeString,
 				Required: true,
 			},
-			"object": &schema.Schema{
+			"object": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"created": &schema.Schema{
+			"created": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"total": &schema.Schema{
+			"total": {
 				Type:     schema.TypeInt,
 				Computed: true,
 			},
-			"modified": &schema.Schema{
+			"modified": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"webhook": &schema.Schema{
+			"webhook": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"lineitems": &schema.Schema{
+			"lineitems": {
 				Type:     schema.TypeList,
 				Computed: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"id": &schema.Schema{
+						"id": {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
-						"pagecount": &schema.Schema{
+						"pagecount": {
 							Type:     schema.TypeInt,
 							Computed: true,
 						},
-						"to": &schema.Schema{
+						"to": {
 							Type:     schema.TypeSet,
 							Computed: true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
-									"name": &schema.Schema{
+									"name": {
 										Type:     schema.TypeString,
 										Computed: true,
 									},
-									"address1": &schema.Schema{
+									"address1": {
 										Type:     schema.TypeString,
 										Computed: true,
 									},
-									"address2": &schema.Schema{
+									"address2": {
 										Type:     schema.TypeString,
 										Computed: true,
 									},
-									"city": &schema.Schema{
+									"city": {
 										Type:     schema.TypeString,
 										Computed: true,
 									},
-									"state": &schema.Schema{
+									"state": {
 										Type:     schema.TypeString,
 										Computed: true,
 									},
-									"postcode": &schema.Schema{
+									"postcode": {
 										Type:     schema.TypeString,
 										Computed: true,
 									},
-									"country": &schema.Schema{
+									"country": {
 										Type:     schema.TypeString,
 										Computed: true,
 									},
-									"formatted": &schema.Schema{
+									"formatted": {
 										Type:     schema.TypeString,
 										Computed: true,
 									},
-									"organization": &schema.Schema{
+									"organization": {
 										Type:     schema.TypeString,
 										Computed: true,
 									},
 								},
 							},
 						},
-						"from": &schema.Schema{
+						"from": {
 							Type:     schema.TypeSet,
 							Computed: true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
-									"name": &schema.Schema{
+									"name": {
 										Type:     schema.TypeString,
 										Computed: true,
 									},
-									"address1": &schema.Schema{
+									"address1": {
 										Type:     schema.TypeString,
 										Computed: true,
 									},
-									"address2": &schema.Schema{
+									"address2": {
 										Type:     schema.TypeString,
 										Computed: true,
 									},
-									"city": &schema.Schema{
+									"city": {
 										Type:     schema.TypeString,
 										Computed: true,
 									},
-									"state": &schema.Schema{
+									"state": {
 										Type:     schema.TypeString,
 										Computed: true,
 									},
-									"postcode": &schema.Schema{
+									"postcode": {
 										Type:     schema.TypeString,
 										Computed: true,
 									},
-									"country": &schema.Schema{
+									"country": {
 										Type:     schema.TypeString,
 										Computed: true,
 									},
-									"formatted": &schema.Schema{
+									"formatted": {
 										Type:     schema.TypeString,
 										Computed: true,
 									},
-									"organization": &schema.Schema{
+									"organization": {
 										Type:     schema.TypeString,
 										Computed: true,
 									},
 								},
 							},
 						},
-						"simplex": &schema.Schema{
+						"simplex": {
 							Type:     schema.TypeBool,
 							Computed: true,
 						},
-						"color": &schema.Schema{
+						"color": {
 							Type:     schema.TypeBool,
 							Computed: true,
 						},
-						"service": &schema.Schema{
+						"service": {
 							Type:     schema.TypeBool,
 							Computed: true,
 						},
-						"pricing": &schema.Schema{
+						"pricing": {
 							Type:     schema.TypeList,
 							Computed: true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
-									"type": &schema.Schema{
+									"type": {
 										Type:     schema.TypeString,
 										Computed: true,
 									},
-									"value": &schema.Schema{
+									"value": {
 										Type:     schema.TypeInt,
 										Computed: true,
 									},
@@ -173,31 +174,31 @@ func dataSourceOrder() *schema.Resource {
 					},
 				},
 			},
-			"account": &schema.Schema{
+			"account": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"customer_reference": &schema.Schema{
+			"customer_reference": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"channel": &schema.Schema{
+			"channel": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"test_mode": &schema.Schema{
+			"test_mode": {
 				Type:     schema.TypeBool,
 				Computed: true,
 			},
-			"state": &schema.Schema{
+			"state": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"cancelled": &schema.Schema{
+			"cancelled": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"cancellation_reason": &schema.Schema{
+			"cancellation_reason": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
@@ -213,13 +214,16 @@ func dataSourceOrderRead(ctx context.Context, d *schema.ResourceData, m interfac
 
 	id := d.Get("id").(string)
 	order, err := client.GetOrder(id)
-	// todo: handle the case where the order does not exist and we gracefully SetID("") i guess.
 	if err != nil {
+		// handle the case where the order does not exist and we gracefully SetID("") I guess.
+		// this allows the user to make decisions in tf code instead of having that shit just bail out.
+		if strings.Contains(err.Error(), "order_not_found") {
+			d.SetId("")
+			return diags
+		}
 		return diag.FromErr(err)
 	}
 
-	// maybe we want to d.SetId(strconv.FormatInt(time.Now().Unix(), 10))
-	// so we always run and refresh the sweet, sweet datas
 	d.SetId(order.Data.ID)
 
 	if err := d.Set("object", order.Data.Object); err != nil {
