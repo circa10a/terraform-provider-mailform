@@ -39,6 +39,7 @@ func New(version string) func() *schema.Provider {
 			},
 			ResourcesMap: map[string]*schema.Resource{
 				"mailform_resource": resourceMailform(),
+				"mailform_pdf":      resourcePDF(),
 			},
 			ConfigureContextFunc: providerConfigure,
 		}
