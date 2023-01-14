@@ -56,52 +56,27 @@ output "order_info" {
 Read-Only:
 
 - `color` (Boolean)
-- `from` (Set of Object) (see [below for nested schema](#nestedobjatt--lineitems--from))
+- `from_address_1` (String)
+- `from_address_2` (String)
+- `from_city` (String)
+- `from_country` (String)
+- `from_formatted` (String)
+- `from_name` (String)
+- `from_organization` (String)
+- `from_postcode` (String)
+- `from_state` (String)
 - `id` (String)
 - `pagecount` (Number)
-- `pricing` (List of Object) (see [below for nested schema](#nestedobjatt--lineitems--pricing))
-- `service` (Boolean)
+- `service` (String)
 - `simplex` (Boolean)
-- `to` (Set of Object) (see [below for nested schema](#nestedobjatt--lineitems--to))
-
-<a id="nestedobjatt--lineitems--from"></a>
-### Nested Schema for `lineitems.from`
-
-Read-Only:
-
-- `address1` (String)
-- `address2` (String)
-- `city` (String)
-- `country` (String)
-- `formatted` (String)
-- `name` (String)
-- `organization` (String)
-- `postcode` (String)
-- `state` (String)
-
-
-<a id="nestedobjatt--lineitems--pricing"></a>
-### Nested Schema for `lineitems.pricing`
-
-Read-Only:
-
-- `type` (String)
-- `value` (Number)
-
-
-<a id="nestedobjatt--lineitems--to"></a>
-### Nested Schema for `lineitems.to`
-
-Read-Only:
-
-- `address1` (String)
-- `address2` (String)
-- `city` (String)
-- `country` (String)
-- `formatted` (String)
-- `name` (String)
-- `organization` (String)
-- `postcode` (String)
-- `state` (String)
+- `to_address_1` (String)
+- `to_address_2` (String)
+- `to_city` (String)
+- `to_country` (String)
+- `to_formatted` (String)
+- `to_name` (String)
+- `to_organization` (String)
+- `to_postcode` (String)
+- `to_state` (String)
 
 
