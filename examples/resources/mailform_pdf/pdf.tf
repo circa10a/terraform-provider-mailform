@@ -7,7 +7,7 @@ terraform {
 }
 
 resource "mailform_pdf" "example" {
-  header   = "My Resumes"
+  header   = "My Resume"
   content  = "Some resume contents"
   filename = "./test.pdf"
 }

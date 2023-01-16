@@ -38,3 +38,8 @@ website/vendor
 .terraform.local.hcl
 *tfstate*
 .terraform/
+.terraform.lock.hcl
+
+# bs pdfs
+*.pdf
+

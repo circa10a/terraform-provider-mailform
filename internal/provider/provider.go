@@ -38,8 +38,8 @@ func New(version string) func() *schema.Provider {
 				"mailform_order": dataSourceOrder(),
 			},
 			ResourcesMap: map[string]*schema.Resource{
-				"mailform_resource": resourceMailform(),
-				"mailform_pdf":      resourcePDF(),
+				"mailform_order": resourceMailformOrder(),
+				"mailform_pdf":   resourcePDF(),
 			},
 			ConfigureContextFunc: providerConfigure,
 		}
