@@ -19,7 +19,7 @@ The provide with use the environment variable `MAILFORM_API_TOKEN` by default un
 terraform {
   required_providers {
     mailform = {
-      source = "github.com/circa10a/terraform-provider-mailform"
+      source = "circa10a/mailform"
     }
   }
 }

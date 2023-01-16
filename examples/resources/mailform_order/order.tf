@@ -1,7 +1,7 @@
 terraform {
   required_providers {
     mailform = {
-      source = "github.com/circa10a/terraform-provider-mailform"
+      source = "circa10a/mailform"
     }
   }
 }
