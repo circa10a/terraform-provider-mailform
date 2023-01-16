@@ -1,8 +1,13 @@
-# Terraform Provider Mailform
+# terraform-provider-mailform <img src="https://i.imgur.com/fAS7XqO.png" height="5%" width="5%" align="left"/>
 
 This provider enables you to send physical mail, driven by terraform, via https://mailform.io
 
 Standing on the shoulders of giants enables us to yeet mail further.
+
+![Build Status](https://github.com/circa10a/terraform-provider-mailform/workflows/release/badge.svg)
+[![Go Report Card](https://goreportcard.com/badge/github.com/circa10a/terraform-provider-mailform)](https://goreportcard.com/report/github.com/circa10a/terraform-provider-mailform)
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/circa10a/terraform-provider-mailform?style=plastic)
+[![Buy Me A Coffee](https://img.shields.io/badge/BuyMeACoffee-Donate-ff813f.svg?logo=CoffeeScript&style=plastic)](https://www.buymeacoffee.com/caleblemoine)
 
 > :warning: Orders cannot be updated/deleted (cancelled). Once created,no more modifications can be made due to API limitations. Deleted resources are simply removed from state.
 
@@ -14,7 +19,7 @@ The provide with use the environment variable `MAILFORM_API_TOKEN` by default un
 terraform {
   required_providers {
     mailform = {
-      source = "github.com/nwheeler-splunk/mailform"
+      source = "github.com/circa10a/terraform-provider-mailform"
     }
   }
 }
@@ -23,12 +28,14 @@ provider "mailform" {
   api_token = "XXX" // If not specified, will read MAILFORM_API_TOKEN env var
 }
 
+// Create PDF
 resource "mailform_pdf" "example" {
   header   = "My Resumes"
   content  = "Some resume contents"
   filename = "./test.pdf"
 }
 
+// Create mail order
 resource "mailform_order" "example" {
   pdf_file       = mailform_pdf.example.filename
   service        = "USPS_PRIORITY"
@@ -44,6 +51,15 @@ resource "mailform_order" "example" {
   from_state     = "TX"
   from_postcode  = "00000"
   from_country   = "US"
+}
+
+// Fetch order data
+data "mailform_order" "example" {
+  id = mailform_order.example.id
+}
+
+output "order_info" {
+  value = data.mailform_order.example
 }
 ```
 

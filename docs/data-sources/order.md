@@ -16,7 +16,7 @@ Order data source in the Terraform provider mailform.
 terraform {
   required_providers {
     mailform = {
-      source = "github.com/nwheeler-splunk/mailform"
+      source = "github.com/circa10a/terraform-provider-mailform"
     }
   }
 }

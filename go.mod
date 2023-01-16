@@ -1,4 +1,4 @@
-module github.com/nwheeler-splunk/terraform-provider-mailform
+module github.com/circa10a/terraform-provider-mailform
 
 go 1.18
 

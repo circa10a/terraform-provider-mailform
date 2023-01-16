@@ -1,6 +1,6 @@
 TEST?=$$(go list ./... | grep -v 'vendor')
 HOSTNAME=github.com
-NAMESPACE=nwheeler-splunk
+NAMESPACE=circa10a
 NAME=mailform
 BINARY=terraform-provider-${NAME}
 VERSION=0.1

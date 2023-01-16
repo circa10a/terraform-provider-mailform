@@ -4,7 +4,7 @@ import (
 	"flag"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/plugin"
-	"github.com/nwheeler-splunk/terraform-provider-mailform/internal/provider"
+	"github.com/circa10a/terraform-provider-mailform/internal/provider"
 )
 
 // Run "go generate" to format example terraform files and generate the docs for the registry/website
@@ -35,7 +35,7 @@ func main() {
 	opts := &plugin.ServeOpts{
 		Debug: debugMode,
 
-		ProviderAddr: "registry.terraform.io/nwheeler-splunk/mailform",
+		ProviderAddr: "registry.terraform.io/circa10a/terraform-provider-mailform",
 
 		ProviderFunc: provider.New(version),
 	}
