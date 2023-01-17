@@ -49,8 +49,10 @@ Mailform order
 - `pdf_url` (String) URL of PDF to be printed and mailed by mailform.
 - `simplex` (Boolean) True if the document should be printed one page to a sheet, false if the document can be printed on both sides of a sheet.
 - `stamp` (Boolean) True if the document MUST use a real postage stamp, false if it is acceptable to mail the document using metered postage or an imprint.
+- `timeouts` (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
 - `to_address_2` (String) The suite or room number of the recipient of this envelope or postcard.
 - `to_organization` (String) The organization or company associated with the recipient of this envelope or postcard.
+- `wait_until_fulfilled` (Boolean) Wait until order is fulfilled (mailed). Default timeout is 5 days, but may be overridden using a timeouts block.
 - `webhook` (String) The webhook that should receive notifications about order updates to this order.
 
 ### Read-Only
@@ -67,6 +69,14 @@ Mailform order
 - `state` (String)
 - `test_mode` (Boolean)
 - `total` (Number)
+
+<a id="nestedblock--timeouts"></a>
+### Nested Schema for `timeouts`
+
+Optional:
+
+- `create` (String)
+
 
 <a id="nestedatt--lineitems"></a>
 ### Nested Schema for `lineitems`

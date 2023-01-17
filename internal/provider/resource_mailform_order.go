@@ -2,12 +2,25 @@ package provider
 
 import (
 	"context"
+	"errors"
+	"fmt"
+	"time"
 
 	"github.com/circa10a/go-mailform"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"golang.org/x/exp/maps"
+)
+
+const (
+	orderStatusPollInterval        = time.Minute * 30
+	orderFulFillmentDefaultTimeout = time.Hour * 24 * 5 // 5 days
+)
+
+var (
+	errOrderCancelled = errors.New("order has been cancelled")
 )
 
 var orderInputSchema = map[string]*schema.Schema{
@@ -207,6 +220,12 @@ var orderInputSchema = map[string]*schema.Schema{
 		Optional:    true,
 		ForceNew:    true,
 	},
+	"wait_until_fulfilled": {
+		Description: "Wait until order is fulfilled (mailed). Default timeout is 5 days, but may be overridden using a timeouts block.",
+		Type:        schema.TypeBool,
+		Optional:    true,
+		ForceNew:    true,
+	},
 	// Computed
 	"id": {
 		Type:     schema.TypeString,
@@ -230,6 +249,9 @@ func resourceMailformOrder() *schema.Resource {
 		ReadContext:   orderRead,
 		DeleteContext: resourceMailformOrderDelete,
 		Schema:        getOrderCreateSchema(),
+		Timeouts: &schema.ResourceTimeout{
+			Create: schema.DefaultTimeout(orderFulFillmentDefaultTimeout),
+		},
 	}
 }
 
@@ -276,7 +298,53 @@ func resourceMailformOrderCreate(ctx context.Context, d *schema.ResourceData, m 
 		return diag.FromErr(err)
 	}
 
-	d.SetId(result.Data.ID)
+	orderID := result.Data.ID
+	d.SetId(orderID)
+
+	if d.Get("wait_until_fulfilled").(bool) {
+		ticker := time.NewTicker(orderStatusPollInterval)
+		timer := time.NewTimer(d.Timeout(schema.TimeoutCreate))
+
+		// If order was cancelled, break early
+		order, err := client.GetOrder(orderID)
+		if err != nil {
+			tflog.Error(ctx, err.Error())
+		}
+		orderStatus := order.Data.State
+		if orderStatus == mailform.StatusCancelled {
+			return diag.FromErr(errOrderCancelled)
+		}
+
+		for {
+			select {
+			case <-ticker.C:
+				// Get order status
+				order, err := client.GetOrder(orderID)
+				if err != nil {
+					tflog.Error(ctx, err.Error())
+				}
+				orderStatus := order.Data.State
+				tflog.Debug(ctx, fmt.Sprintf("order state: %s", orderStatus))
+				// If order has been mailed
+				if orderStatus == mailform.StatusFulfilled {
+					return orderRead(ctx, d, m)
+				}
+				// If order was cancelled, break
+				if orderStatus == mailform.StatusCancelled {
+					return diag.FromErr(errOrderCancelled)
+				}
+				select {
+				case <-timer.C:
+					return diag.FromErr(errors.New("waiting for order to be fulfilled timed out"))
+				default:
+					break
+				}
+			case <-ctx.Done():
+				return diag.FromErr(errors.New("waiting for order cancelled"))
+			}
+		}
+
+	}
 
 	// Set computed fields in state. Saves alot of copy paste by just running an extra GET after creating the order
 	return orderRead(ctx, d, m)
