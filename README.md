@@ -13,7 +13,7 @@ Standing on the shoulders of giants enables us to yeet mail further.
 
 ## Usage
 
-The provide with use the environment variable `MAILFORM_API_TOKEN` by default unless specified in the provider configuration.
+The provider with use the environment variable `MAILFORM_API_TOKEN` by default unless specified in the provider configuration.
 
 ```hcl
 terraform {
@@ -25,7 +25,7 @@ terraform {
 }
 
 provider "mailform" {
-  api_token = "XXX" // If not specified, will read MAILFORM_API_TOKEN env var
+  api_token = "XXX" // If not specified, will read MAILFORM_API_TOKEN environment variable
 }
 
 // Create PDF
@@ -65,7 +65,7 @@ output "order_info" {
 
 ## Requirements
 
-- [Terraform](https://www.terraform.io/downloads.html) >= 0.13.x
+- [Terraform](https://www.terraform.io/downloads.html) >= 0.12.x
 - [Go](https://golang.org/doc/install) >= 1.18
 
 ## Building The Provider
@@ -85,7 +85,7 @@ Please see the Go documentation for the most up to date information about using 
 
 To add a new dependency `github.com/author/dependency` to your Terraform provider:
 
-```
+```sh
 go get github.com/author/dependency
 go mod tidy
 ```
@@ -109,5 +109,5 @@ In order to run the full suite of Acceptance tests, run `make testacc`.
 *Note:* Acceptance tests create real resources, and often cost money to run.
 
 ```sh
-$ make testacc
+make testacc
 ```
