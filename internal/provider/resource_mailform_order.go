@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/circa10a/go-mailform"
@@ -45,7 +46,7 @@ var orderInputSchema = map[string]*schema.Schema{
 		ForceNew:    true,
 	},
 	"service": {
-		Description:  "What shipping service/speed to use.",
+		Description:  fmt.Sprintf("What shipping service/speed to use. Must be one of: `%s`", strings.Join(mailform.ServiceCodes, "`, `")),
 		Type:         schema.TypeString,
 		Required:     true,
 		ValidateFunc: validation.StringInSlice(mailform.ServiceCodes, false),
@@ -325,13 +326,15 @@ func resourceMailformOrderCreate(ctx context.Context, d *schema.ResourceData, m 
 				}
 				orderStatus := order.Data.State
 				tflog.Debug(ctx, fmt.Sprintf("order state: %s", orderStatus))
-				// If order has been mailed
-				if orderStatus == mailform.StatusFulfilled {
-					return orderRead(ctx, d, m)
-				}
+
 				// If order was cancelled, break
 				if orderStatus == mailform.StatusCancelled {
 					return diag.FromErr(errOrderCancelled)
+				}
+
+				// If order has been mailed
+				if orderStatus == mailform.StatusFulfilled {
+					break
 				}
 				select {
 				case <-timer.C:

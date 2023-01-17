@@ -23,7 +23,7 @@ Mailform order
 - `from_name` (String) The name of the sender of this envelope or postcard.
 - `from_postcode` (String) The address postcode or zip code of the sender of this envelope or postcard. Example "00000"
 - `from_state` (String) The address state of the sender of this envelope or postcard. Example "WA"
-- `service` (String) What shipping service/speed to use.
+- `service` (String) What shipping service/speed to use. Must be one of: `FEDEX_OVERNIGHT`, `USPS_PRIORITY_EXPRESS`, `USPS_PRIORITY`, `USPS_CERTIFIED_PHYSICAL_RECEIPT`, `USPS_CERTIFIED_RECEIPT`, `USPS_CERTIFIED`, `USPS_FIRST_CLASS`, `USPS_STANDARD`, `USPS_POSTCARD`
 - `to_address_1` (String) The street number and name of the recipient of this envelope or postcard.
 - `to_city` (String) The address state of the recipient of this envelope or postcard.
 - `to_country` (String) The address country of the recipient of this envelope or postcard. Example "US"
