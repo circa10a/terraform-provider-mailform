@@ -23,23 +23,39 @@ func resourcePDF() *schema.Resource {
 		DeleteContext: resourcePDFDelete,
 
 		Schema: map[string]*schema.Schema{
-			"header": {
-				Description: "Header/title of PDF",
-				Type:        schema.TypeString,
-				Required:    true,
-				ForceNew:    true,
-			},
-			"content": {
-				Description: "Content of PDF",
-				Type:        schema.TypeString,
-				Required:    true,
-				ForceNew:    true,
-			},
 			"filename": {
 				Description: "The path to the PDF file that will be created",
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
+			},
+			"header": {
+				Description: "Header/title of PDF",
+				Type:        schema.TypeString,
+				Optional:    true,
+				ForceNew:    true,
+				ConflictsWith: []string{
+					"image_filename",
+				},
+			},
+			"content": {
+				Description: "Content of PDF",
+				Type:        schema.TypeString,
+				Optional:    true,
+				ForceNew:    true,
+				ConflictsWith: []string{
+					"image_filename",
+				},
+			},
+			"image_filename": {
+				Description: "The image file to be converted to a PDF. Typically used for postcards",
+				Type:        schema.TypeString,
+				Optional:    true,
+				ForceNew:    true,
+				ConflictsWith: []string{
+					"header",
+					"content",
+				},
 			},
 		},
 	}
@@ -48,30 +64,25 @@ func resourcePDF() *schema.Resource {
 func resourcePDFCreate(ctx context.Context, d *schema.ResourceData, meta any) diag.Diagnostics {
 	var diags diag.Diagnostics
 
-	pdf := gofpdf.New(gofpdf.OrientationPortrait, "mm", gofpdf.PageSizeLetter, "")
-
-	header := d.Get("header").(string)
-	content := d.Get("content").(string)
+	// Used for generating pdfs and also converting pdf's to images
 	filename := d.Get("filename").(string)
 
-	pdf.AddPage()
-	pdf.SetTitle(d.Get("header").(string), false)
-	pdf.SetFont("Arial", "B", 16)
-	// Calculate width of title and position
-	wd := pdf.GetStringWidth(header) + 6
-	pdf.SetX((210 - wd) / 2)
-	// Title
-	pdf.CellFormat(wd, 9, header, "", 1, "C", false, 0, "")
-	// Line break
-	pdf.Ln(10)
-	pdf.SetFont("Arial", "", 11)
-	pdf.SetAutoPageBreak(true, 2.00)
-	// Write ze content
-	pdf.Write(8, content)
+	// If an image, convert to pdf
+	if imageFilename, ok := d.GetOk("image_filename"); ok {
+		err := convertImage(imageFilename.(string), filename)
+		if err != nil {
+			defer resourcePDFDelete(ctx, d, filename)
+			return diag.FromErr(err)
+		}
+	} else {
+		// Generate content if not image
+		header := d.Get("header").(string)
+		content := d.Get("content").(string)
 
-	err := pdf.OutputFileAndClose(filename)
-	if err != nil {
-		return diag.FromErr(err)
+		err := renderPDF(header, content, filename)
+		if err != nil {
+			return diag.FromErr(err)
+		}
 	}
 
 	outputContent, err := ioutil.ReadFile(filename)
@@ -114,5 +125,40 @@ func resourcePDFRead(ctx context.Context, d *schema.ResourceData, meta any) diag
 
 func resourcePDFDelete(ctx context.Context, d *schema.ResourceData, meta any) diag.Diagnostics {
 	os.Remove(d.Get("filename").(string))
+	return nil
+}
+
+// renderPDF converts header + content to a pdf and writes to an output file
+func renderPDF(header string, content string, outputFilePath string) error {
+	pdf := gofpdf.New(gofpdf.OrientationPortrait, "mm", gofpdf.PageSizeLetter, "")
+	pdf.AddPage()
+	pdf.SetTitle(header, false)
+	pdf.SetFont("Arial", "B", 16)
+	// Calculate width of title and position
+	wd := pdf.GetStringWidth(header) + 6
+	pdf.SetX((210 - wd) / 2)
+	// Title
+	pdf.CellFormat(wd, 9, header, "", 1, "C", false, 0, "")
+	// Line break
+	pdf.Ln(10)
+	pdf.SetFont("Arial", "", 11)
+	pdf.SetAutoPageBreak(true, 2.00)
+	// Write ze content
+	pdf.Write(8, content)
+
+	return pdf.OutputFileAndClose(outputFilePath)
+}
+
+// convertImage converts input image path to pdf file
+func convertImage(inputFilePath, outputFilePath string) error {
+	pdf := gofpdf.New(gofpdf.OrientationPortrait, "mm", gofpdf.PageSizeLetter, "")
+	pdf.AddPage()
+	pdf.Image(inputFilePath, 0, 0, 240, 480, false, "", 0, "")
+
+	err := pdf.OutputFileAndClose(outputFilePath)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }

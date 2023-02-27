@@ -17,9 +17,13 @@ Render a PDF and write to a local file.
 
 ### Required
 
-- `content` (String) Content of PDF
 - `filename` (String) The path to the PDF file that will be created
+
+### Optional
+
+- `content` (String) Content of PDF
 - `header` (String) Header/title of PDF
+- `image_filename` (String) The image file to be converted to a PDF. Typically used for postcards
 
 ### Read-Only
 
