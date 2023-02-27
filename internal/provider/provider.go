@@ -8,6 +8,10 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
+const (
+	mailformTokenAPIEnvVar = "MAILFORM_API_TOKEN"
+)
+
 func init() {
 	// Set descriptions to support markdown syntax, this will be used in document generation
 	// and the language server.
@@ -31,7 +35,7 @@ func New(version string) func() *schema.Provider {
 				"api_token": {
 					Type:        schema.TypeString,
 					Optional:    true,
-					DefaultFunc: schema.EnvDefaultFunc("MAILFORM_API_TOKEN", nil),
+					DefaultFunc: schema.EnvDefaultFunc(mailformTokenAPIEnvVar, nil),
 				},
 			},
 			DataSourcesMap: map[string]*schema.Resource{
