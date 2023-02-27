@@ -4,7 +4,9 @@ import (
 	"context"
 	"crypto/sha1"
 	"encoding/hex"
+	"errors"
 	"io/ioutil"
+	"net/http"
 	"os"
 
 	"github.com/hashicorp/terraform-plugin-log/tflog"
@@ -55,6 +57,33 @@ func resourcePDF() *schema.Resource {
 				ConflictsWith: []string{
 					"header",
 					"content",
+				},
+				ValidateFunc: func(val any, key string) (warns []string, errs []error) {
+					buf := make([]byte, 512)
+
+					imageFilename := val.(string)
+					file, err := os.Open(imageFilename)
+					if err != nil {
+						errs = append(errs, err)
+						return warns, errs
+					}
+
+					defer file.Close()
+
+					_, err = file.Read(buf)
+					if err != nil {
+						errs = append(errs, err)
+						return warns, errs
+					}
+
+					contentType := http.DetectContentType(buf)
+
+					if contentType != "image/png" && contentType != "image/jpeg" {
+						errs = append(errs, errors.New("image file is not a valid image"))
+						return warns, errs
+					}
+
+					return warns, errs
 				},
 			},
 		},
