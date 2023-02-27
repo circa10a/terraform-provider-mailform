@@ -35,6 +35,12 @@ resource "mailform_pdf" "example" {
   filename = "./test.pdf"
 }
 
+// Convert image to pdf for postcards
+resource "mailform_pdf" "example" {
+  image_filename = "./testImage.jpg
+  filename       = "./testImage.pdf"
+}
+
 // Create mail order
 resource "mailform_order" "example" {
   pdf_file       = mailform_pdf.example.filename
