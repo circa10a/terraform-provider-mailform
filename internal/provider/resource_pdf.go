@@ -91,7 +91,6 @@ func resourcePDF() *schema.Resource {
 }
 
 func resourcePDFCreate(ctx context.Context, d *schema.ResourceData, meta any) diag.Diagnostics {
-	var diags diag.Diagnostics
 
 	// Used for generating pdfs and also converting pdf's to images
 	filename := d.Get("filename").(string)
@@ -124,7 +123,7 @@ func resourcePDFCreate(ctx context.Context, d *schema.ResourceData, meta any) di
 
 	tflog.Trace(ctx, "created a pdf resource")
 
-	return diags
+	return nil
 }
 
 func resourcePDFRead(ctx context.Context, d *schema.ResourceData, meta any) diag.Diagnostics {
@@ -153,7 +152,10 @@ func resourcePDFRead(ctx context.Context, d *schema.ResourceData, meta any) diag
 }
 
 func resourcePDFDelete(ctx context.Context, d *schema.ResourceData, meta any) diag.Diagnostics {
-	os.Remove(d.Get("filename").(string))
+	err := os.Remove(d.Get("filename").(string))
+	if err != nil {
+		return diag.FromErr(err)
+	}
 	return nil
 }
 
@@ -182,7 +184,7 @@ func renderPDF(header string, content string, outputFilePath string) error {
 func convertImage(inputFilePath, outputFilePath string) error {
 	pdf := gofpdf.New(gofpdf.OrientationPortrait, "mm", gofpdf.PageSizeLetter, "")
 	pdf.AddPage()
-	pdf.Image(inputFilePath, 0, 0, 240, 480, false, "", 0, "")
+	pdf.Image(inputFilePath, 0, 0, 220, 280, false, "", 0, "")
 
 	err := pdf.OutputFileAndClose(outputFilePath)
 	if err != nil {
