@@ -1,4 +1,4 @@
-# terraform-provider-mailform <img src="https://i.imgur.com/fAS7XqO.png" height="5%" width="5%" align="left"/>
+# terraform-provider-mailform <img src="https://i.imgur.com/fAS7XqO.png" width="5%" align="left"/>
 
 This provider enables you to send physical mail, driven by terraform, via https://mailform.io
 
