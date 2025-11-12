@@ -9,7 +9,6 @@ Standing on the shoulders of giants enables us to yeet mail further.
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/circa10a/terraform-provider-mailform?style=plastic)
 [![Buy Me A Coffee](https://img.shields.io/badge/BuyMeACoffee-Donate-ff813f.svg?logo=CoffeeScript&style=plastic)](https://www.buymeacoffee.com/caleblemoine)
 
-> :warning: Orders cannot be updated/deleted (cancelled). Once created,no more modifications can be made due to API limitations. Deleted resources are simply removed from state.
 
 ## Usage
 
@@ -78,11 +77,26 @@ output "order_info" {
 
 1. Clone the repository
 1. Enter the repository directory
-1. Build the provider using the Go `install` command:
+1. Build the provider using the `make install` command:
 
 ```sh
-go install
+make install
 ```
+
+## Local testing
+
+Example provider config for `terraform init`:
+
+```hcl
+terraform {
+  required_providers {
+    mailform = {
+      source = "github.com/circa10a/mailform"
+      version = "= 0.5.0"
+    }
+  }
+}
+````
 
 ## Adding Dependencies
 

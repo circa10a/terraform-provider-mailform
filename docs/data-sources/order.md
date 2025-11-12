@@ -78,5 +78,3 @@ Read-Only:
 - `to_organization` (String)
 - `to_postcode` (String)
 - `to_state` (String)
-
-
