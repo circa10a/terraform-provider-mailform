@@ -28,5 +28,3 @@ Render a PDF and write to a local file.
 ### Read-Only
 
 - `id` (String) The ID of this resource.
-
-

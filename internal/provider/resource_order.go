@@ -353,8 +353,25 @@ func resourceMailformOrderCreate(ctx context.Context, d *schema.ResourceData, m 
 	return orderRead(ctx, d, m)
 }
 
-func resourceMailformOrderDelete(ctx context.Context, d *schema.ResourceData, meta any) diag.Diagnostics {
-	// API doesn't support deleting orders, we simply just remove from state
+// resourceMailformOrderDelete cancels an order if not already sent/cancelled.
+func resourceMailformOrderDelete(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
+	providerConfig := m.(map[string]interface{})
+	client := providerConfig["client"].(*mailform.Client)
+
+	state := d.Get("state").(string)
+	id := d.Get("id").(string)
+
+	if state == mailform.StatusCancelled || state == mailform.StatusFulfilled {
+		tflog.Debug(ctx, fmt.Sprintf("won't delete since order is sent/cancelled order state: %s", state))
+		d.SetId("")
+		return nil
+	}
+
+	err := client.CancelOrder(id)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
 	d.SetId("")
 	return nil
 }

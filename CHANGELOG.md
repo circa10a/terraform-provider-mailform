@@ -1,3 +1,3 @@
-## 0.1.0 (Unreleased)
+## 0.5.0
 
-BACKWARDS INCOMPATIBILITIES / NOTES:
+Support properly cancelling/deleting resources with new version of go-mailform
